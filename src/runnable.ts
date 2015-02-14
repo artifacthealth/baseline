@@ -52,32 +52,24 @@ class Runnable {
         }
 
         this._callback = done;
+        if(this.async) {
+            this._resetTimeout();
+        }
+
+        process.nextTick(() => this.invoke(done));
+    }
+
+    protected invoke(callback: Callback): void {
 
         if(this.async) {
             // execute async
-            this._resetTimeout();
-            try {
-                this.invoke(done);
-            }
-            catch(err) {
-                done(err);
-            }
+            this.action(callback);
             return;
         }
 
         // execute sync
-        try {
-            this.invoke();
-            process.nextTick(done);
-        }
-        catch(err) {
-            process.nextTick(() => done(err));
-        }
-    }
-
-    protected invoke(callback?: Callback): void {
-
-        this.action(callback);
+        this.action();
+        callback();
     }
 
     private _resetTimeout(): void {
@@ -86,7 +78,7 @@ class Runnable {
         this._clearTimeout();
 
         this._timeoutTimer = setTimeout(function () {
-            this.callback(new Error('timeout of ' + ms + 'ms exceeded. Ensure the done() callback is being called in this measure.'));
+            this._callback(new Error('timeout of ' + ms + 'ms exceeded. Ensure the done() callback is being called in this measure.'));
             this.timedOut = true;
         }, ms);
     }

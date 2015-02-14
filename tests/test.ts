@@ -7,12 +7,14 @@ var suite = baseline.suite("Some test suite", () => {
     var str = "hello world!";
     var reg = /world/;
 
-    baseline.test("Regexp", () => {
+    baseline.test("Regexp", (done) => {
         reg.test(str);
+        process.nextTick(done);
     });
 
-    baseline.test("indexOf", () => {
+    baseline.test("indexOf", (done) => {
         str.indexOf("world");
+        process.nextTick(done);
     });
 });
 
@@ -21,4 +23,5 @@ evaluator.maxTime = 5;
 
 suite.run(evaluator, (err: Error) => {
     if (err) throw err;
+    process.exit();
 });

@@ -60,37 +60,45 @@ class Test extends Runnable {
 
     protected invoke(callback: Callback): void {
 
-        var i = this.count;
+        // execute "setup" hooks
+        async.eachSeries(this.setup, (action: Runnable, done: Callback) => action.run(done), (err: Error) => {
+            if (err) return callback(err);
 
-        if(!this.async) {
-            var start = this.timer.start();
-            while (i--) {
-                this.action();
+            if (!this.async) {
+                var count = this.count,
+                    start = this.timer.start();
+                while (count--) {
+                    this.action();
+                }
+
+                this.clocked = this.timer.stop(start);
+
+                // execute "teardown" hooks
+                async.eachSeries(this.teardown, (action: Runnable, done: Callback) => action.run(done), callback);
+                return;
             }
-            this.clocked = this.timer.stop(start);
-            return;
-        }
 
-        var self = this,
-            start = this.timer.start();
-        (function next() {
-            try {
+            var self = this,
+                count = this.count,
+                start = this.timer.start();
+            next();
+
+            function next() {
                 self.action((err: Error) => {
                     if (err) return callback(err);
 
-                    if (i-- == 0) {
-                        this.clocked = this.timer.stop(start);
-                        callback();
+                    if (--count == 0) {
+                        self.clocked = self.timer.stop(start);
+
+                        // execute "teardown" hooks
+                        async.eachSeries(self.teardown, (action: Runnable, done: Callback) => action.run(done), callback);
                     }
                     else {
                         next();
                     }
                 });
             }
-            catch(err) {
-                callback(err);
-            }
-        })();
+        });
     }
 }
 
