@@ -23,10 +23,6 @@ module Baseline {
         block.call(suite);
         suites.shift();
 
-        function done(err: Error): void {
-            console.log("Finished");
-        }
-
         if(!parent) {
             suites = undefined;
         }
@@ -34,8 +30,10 @@ module Baseline {
         return suite;
     }
 
-    export function test(title: string, action: ActionCallback): void {
-        suites[0].addTest(new Test(title, action));
+    export function test(title: string, action: ActionCallback): Test {
+        var test = new Test(title, action);
+        suites[0].addTest(test);
+        return test;
     }
 
     export function after(action: ActionCallback): void {

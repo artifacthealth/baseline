@@ -5,6 +5,17 @@ import Test = require("./test");
 import Runnable = require("./runnable");
 import Evaluator = require("./evaluator");
 
+/*
+
+ if(err) {
+ console.log(test.title + ": " + err.message + "\n" + (<any>err).stack);
+ done();
+ return;
+ }
+ console.log(test.title + ": " + formatNumberWithCommas(test.hz, 0) + " ops/sec \xb1" + test.rme.toFixed(2) + "% (" + test.cycles + " runs sampled)");
+
+ */
+
 class Suite {
 
     private _tests: Test[] = [];
@@ -57,16 +68,11 @@ class Suite {
 
                 // evaluate the test
                 evaluator.evaluate(test, (err) => {
-
-                    if(err) {
-                        console.log(test.title + ": " + err.message + "\n" + (<any>err).stack);
-                        done();
-                        return;
-                    }
-                    console.log(test.title + ": " + formatNumberWithCommas(test.hz, 0) + " \xb1" + test.rme.toFixed(2) + "% ops/sec");
+                    if(err) return done(err);
                     done();
                 });
             }, (err) => {
+                if(err) return callback(err);
 
                 // execute any other suites
                 async.eachSeries(this._suites, (suite: Suite, done: Callback) => suite.run(evaluator, done), (err) => {

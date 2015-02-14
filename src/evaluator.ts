@@ -46,9 +46,9 @@ class Evaluator {
      */
     evaluate(test: Test, callback: Callback): void {
 
-        var sample: number[] = [],
-            self = this;
+        var self = this;
 
+        test.sample = [];
         test.timer = this._timer;
         test.timestamp = new Date();
 
@@ -56,22 +56,22 @@ class Evaluator {
             self._cycle(test, (err: Error, period?: number) => {
                 if(err) return callback(err);
 
-                var size = sample.push(period);
+                var size = test.sample.push(period);
 
                 // sample mean (estimate of the population mean)
-                var mean = Stats.mean(sample);
+                test.mean = Stats.mean(test.sample);
                 // sample variance (estimate of the population variance)
-                var variance = Stats.variance(sample, mean);
+                var variance = Stats.variance(test.sample, test.mean);
                 // sample standard deviation (estimate of the population standard deviation)
                 var sd = Math.sqrt(variance);
                 // standard error of the mean (aka the standard deviation of the sampling distribution of the sample mean)
                 var sem = sd / Math.sqrt(size);
                 // margin of error
-                var moe = sem * Stats.criticalValue(size - 1);
+                test.moe = sem * Stats.criticalValue(size - 1);
                 // relative margin of error
-                test.rme = (moe / mean) * 100 || 0;
+                test.rme = (test.moe / test.mean) * 100 || 0;
                 // operations per second
-                test.hz = 1 / mean;
+                test.hz = 1 / test.mean;
 
                 if(size >= self.minSamples && (new Date().getTime() - test.timestamp.getTime()) / 1e3 >= self.maxTime) {
                     // If we have met the minimum number of samples and exceeded the max allocated time, then we are finished
