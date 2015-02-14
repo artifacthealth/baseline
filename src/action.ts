@@ -12,7 +12,7 @@ class Action extends Runnable {
      * @param callback Function called after action completes.
      */
     run(callback: Callback): void {
-        this.execute(null, callback);
+        this.execute(callback);
     }
 }
 

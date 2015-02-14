@@ -63,7 +63,7 @@ class Suite {
                         done();
                         return;
                     }
-                    console.log(test.title + ": " + formatNumberWithCommas(test.hz, 2) + " \xb1" + test.rme.toFixed(2) + "% ops/sec");
+                    console.log(test.title + ": " + formatNumberWithCommas(test.hz, 0) + " \xb1" + test.rme.toFixed(2) + "% ops/sec");
                     done();
                 });
             }, (err) => {

@@ -36,7 +36,7 @@ class Evaluator {
 
         // resolve time span required to achieve a percent uncertainty of at most 1%
         // http://spiff.rit.edu/classes/phys273/uncert/uncert.html
-        this.minTime = this._timer.resolution / 2 / 0.01;
+        this.minTime = Math.max(this._timer.resolution / 2 / 0.01, 0.05);
     }
 
     /**
@@ -92,7 +92,7 @@ class Evaluator {
 
         test.cycles++;
 
-        this._clock(test, (err: Error, clocked?: number) => {
+        test.clock(this._timer, (err: Error, clocked?: number) => {
             if(err) return callback(err);
 
             // seconds per operation
@@ -105,35 +105,6 @@ class Evaluator {
                 callback(null, period);
             }
         });
-    }
-
-    /**
-     * Clocks the time taken to execute a test per cycle
-     * @param test The Test to evaluate.
-     * @param callback Called with the time, in seconds, to execute a test cycle,
-     */
-    private _clock(test: Test, callback: ResultCallback<number>): void {
-
-        // cumulative time spent executing Test
-        var clocked = 0;
-        // number of times to execute Test
-        var count = test.count;
-
-        var self = this;
-        (function next() {
-            test.run(self._timer, (err: Error, duration?: number) => {
-                if (err) return callback(err);
-
-                clocked += duration;
-
-                if (count-- == 0) {
-                    callback(null, clocked)
-                }
-                else {
-                    next();
-                }
-            });
-        })();
     }
 }
 

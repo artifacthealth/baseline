@@ -1,9 +1,7 @@
 /// <reference path="./types.d.ts" />
 
-import Timer = require("./timer");
-
 /**
- * Class for running and timing an action. Handles both synchronous and asynchronous actions.
+ * Class for running an action. Handles both synchronous and asynchronous actions.
  */
 class Runnable {
 
@@ -17,40 +15,31 @@ class Runnable {
      */
     timedOut: boolean;
 
-    private _action: ActionCallback;
-    private _async: boolean;
-    private _timer: NodeJS.Timer;
+    protected async: boolean;
+
+    private _timeoutTimer: NodeJS.Timer;
     private _callback: Callback;
 
-    constructor(action: ActionCallback) {
+    constructor(protected action: ActionCallback) {
 
         if(!action) {
             throw new Error("Missing require argument 'action'.");
         }
 
-        this._action = action;
-        this._async = !!action.length;
+        this.async = !!action.length;
     }
 
     /**
-     * Runs the action. Duration, in milliseconds, is returned if a timer is provided.
-     * @param timer The timer to use to measure the duration of the action. If null, the action is not timed.
+     * Runs the action.
      * @param callback Function called after action completes.
      */
-    protected execute(timer: Timer, callback: ResultCallback<number>): void {
+    protected execute(callback: Callback): void {
 
         var finished = false,
             self = this;
 
-        if(timer) {
-            var start = timer.start();
-        }
-
         function done(err?: Error) {
 
-            if(timer) {
-                var duration = timer.stop(start);
-            }
             if(self.timedOut) return;
             self._clearTimeout();
             if(finished) {
@@ -59,16 +48,16 @@ class Runnable {
             }
             finished = true;
             // calculate duration and execute callback
-            callback(err, timer ? duration : undefined);
+            callback(err);
         }
 
         this._callback = done;
 
-        if(this._async) {
+        if(this.async) {
             // execute async
             this._resetTimeout();
             try {
-                this._action(done);
+                this.invoke(done);
             }
             catch(err) {
                 done(err);
@@ -78,7 +67,7 @@ class Runnable {
 
         // execute sync
         try {
-            this._action();
+            this.invoke();
             process.nextTick(done);
         }
         catch(err) {
@@ -86,19 +75,24 @@ class Runnable {
         }
     }
 
+    protected invoke(callback?: Callback): void {
+
+        this.action(callback);
+    }
+
     private _resetTimeout(): void {
 
         var ms = this.timeout || 60000;
         this._clearTimeout();
 
-        this._timer = setTimeout(function () {
+        this._timeoutTimer = setTimeout(function () {
             this.callback(new Error('timeout of ' + ms + 'ms exceeded. Ensure the done() callback is being called in this measure.'));
             this.timedOut = true;
         }, ms);
     }
 
     private _clearTimeout(): void {
-        clearTimeout(this._timer);
+        clearTimeout(this._timeoutTimer);
     }
 }
 
