@@ -2,17 +2,17 @@
 
 import async = require("async");
 import Test = require("./test");
-import Action = require("./action");
+import Runnable = require("./runnable");
 import Evaluator = require("./evaluator");
 
 class Suite {
 
     private _tests: Test[] = [];
     private _suites: Suite[] = [];
-    private _before: Action[] = [];
-    private _after: Action[] = [];
-    private _beforeEach: Action[] = [];
-    private _afterEach: Action[] = [];
+    private _before: Runnable[] = [];
+    private _after: Runnable[] = [];
+    private _beforeEach: Runnable[] = [];
+    private _afterEach: Runnable[] = [];
 
     constructor(public title: string) {
 
@@ -27,25 +27,25 @@ class Suite {
     }
 
     addBefore(action: ActionCallback): void {
-        this._before.push(new Action(action));
+        this._before.push(new Runnable(action));
     }
 
     addAfter(action: ActionCallback): void {
-        this._after.push(new Action(action));
+        this._after.push(new Runnable(action));
     }
 
     addBeforeEach(action: ActionCallback): void {
-        this._beforeEach.push(new Action(action));
+        this._beforeEach.push(new Runnable(action));
     }
 
     addAfterEach(action: ActionCallback): void {
-        this._afterEach.push(new Action(action));
+        this._afterEach.push(new Runnable(action));
     }
 
     run(evaluator: Evaluator, callback: Callback): void {
 
         // execute "before" hooks
-        async.eachSeries(this._before, (action: Action, done: Callback) => action.run(done), (err: Error) => {
+        async.eachSeries(this._before, (action: Runnable, done: Callback) => action.run(done), (err: Error) => {
             if(err) return callback(err);
 
             // for each test
@@ -73,7 +73,7 @@ class Suite {
                     if (err) return callback(err);
 
                     // execute "after" hooks
-                    async.eachSeries(this._after, (action: Action, done: Callback) => action.run(done), callback);
+                    async.eachSeries(this._after, (action: Runnable, done: Callback) => action.run(done), callback);
                 });
             });
         });

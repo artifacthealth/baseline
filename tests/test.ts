@@ -4,12 +4,15 @@ import Evaluator = require("../src/evaluator");
 
 var suite = baseline.suite("Some test suite", () => {
 
-    var value = true;
-    baseline.test("!", () => {
-          var test = !value;
+    var str = "hello world!";
+    var reg = /world/;
+
+    baseline.test("Regexp", () => {
+        reg.test(str);
     });
-    baseline.test("!!!", () => {
-          var test = !!!value;
+
+    baseline.test("indexOf", () => {
+        str.indexOf("world");
     });
 });
 

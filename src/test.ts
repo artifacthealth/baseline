@@ -2,7 +2,6 @@
 
 import async = require("async");
 import Runnable = require("./runnable");
-import Action = require("./action");
 import Timer = require("./timer");
 
 /**
@@ -38,68 +37,59 @@ class Test extends Runnable {
     /**
      * List of actions to execute before Test is run. Not included in timed duration.
      */
-    setup: Action[];
+    setup: Runnable[];
 
     /**
      * List of actions to execute after Test in run. Not included in timed duration.
      */
-    teardown: Action[];
+    teardown: Runnable[];
 
     /**
-     * Time taken to complete the last test cycle.
+     * Time taken to complete the last test cycle, in seconds.
      */
-    duration: number;
+    clocked: number;
 
     /**
-     * Timer to use.
+     * The timer to use when running the test.
      */
-    private _timer: Timer;
+    timer: Timer;
 
     constructor(public title: string, action: ActionCallback) {
         super(action);
     }
 
-    /**
-     * Clocks the time taken to execute a test per cycle
-     * @param callback Called with the time, in seconds, to execute a test cycle,
-     */
-    clock(timer: Timer, callback: ResultCallback<number>): void {
-
-        this._timer = timer;
-        this.execute((err: Error) => {
-            if(err) return callback(err);
-            callback(null, this.duration);
-        });
-
-    }
-
-    protected invoke(callback?: Callback): void {
+    protected invoke(callback: Callback): void {
 
         var i = this.count;
 
         if(!this.async) {
-            var start = this._timer.start();
-            while(i--) {
+            var start = this.timer.start();
+            while (i--) {
                 this.action();
             }
-            this.duration = this._timer.stop(start);
+            this.clocked = this.timer.stop(start);
             return;
         }
 
         var self = this,
-            start = this._timer.start();
+            start = this.timer.start();
         (function next() {
-            self.action((err: Error) => {
-                if (err) return callback(err) ;
+            try {
+                self.action((err: Error) => {
+                    if (err) return callback(err);
 
-                if (i-- == 0) {
-                    this.duration = this._timer.stop(start);
-                    callback(null);
-                }
-                else {
-                    next();
-                }
-            });
+                    if (i-- == 0) {
+                        this.clocked = this.timer.stop(start);
+                        callback();
+                    }
+                    else {
+                        next();
+                    }
+                });
+            }
+            catch(err) {
+                callback(err);
+            }
         })();
     }
 }

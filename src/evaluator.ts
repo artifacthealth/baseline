@@ -49,6 +49,7 @@ class Evaluator {
         var sample: number[] = [],
             self = this;
 
+        test.timer = this._timer;
         test.timestamp = new Date();
 
         (function next() {
@@ -92,13 +93,13 @@ class Evaluator {
 
         test.cycles++;
 
-        test.clock(this._timer, (err: Error, clocked?: number) => {
+        test.run((err: Error) => {
             if(err) return callback(err);
 
             // seconds per operation
-            var period = clocked / test.count;
-            if(clocked < this.minTime) {
-                test.count += Math.ceil((this.minTime - clocked) / period);
+            var period = test.clocked / test.count;
+            if(test.clocked < this.minTime) {
+                test.count += Math.ceil((this.minTime - test.clocked) / period);
                 this._cycle(test, callback);
             }
             else {

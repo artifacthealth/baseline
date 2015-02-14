@@ -33,7 +33,7 @@ class Runnable {
      * Runs the action.
      * @param callback Function called after action completes.
      */
-    protected execute(callback: Callback): void {
+    run(callback: Callback): void {
 
         var finished = false,
             self = this;
