@@ -1,31 +1,13 @@
-import baseline = require("../src/baseline");
-import NodeTimer = require("../src/nodeTimer");
-import Evaluator = require("../src/evaluator");
+import Baseline = require("../src/baseline");
 import Test = require("../src/test");
+import Runner = require("../src/runner")
 
-var test1: Test;
-var test2: Test;
+var baseline = new Baseline();
 
-var suite = baseline.suite("Some test suite", () => {
+baseline.files = ["*.benchmark.js"]
 
-    var str = "hello world!";
-    var reg = /world/;
+baseline.run((err: Error) => {
+    if(err) throw err;
 
-    test1 = baseline.test("Regexp", () => {
-        reg.test(str);
-    });
-
-    test2 = baseline.test("indexOf", () => {
-        str.indexOf("world");
-    });
-});
-
-var evaluator = new Evaluator(new NodeTimer());
-evaluator.maxTime = 5;
-
-suite.run(evaluator, (err: Error) => {
-    if (err) throw err;
-    console.log("Result = " + test1.compare(test2));
-    process.exit();
-});
-
+    process.exit(0);
+})

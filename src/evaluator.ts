@@ -18,12 +18,12 @@ class Evaluator {
     /**
      * The time needed, in seconds, to reduce the percent uncertainty of a test to 1%
      */
-    minTime = 0;
+    private _minTime = 0;
 
     /**
      * The minimum sample size required to perform statistical analysis.
      */
-    minSamples = 5;
+    private _minSamples = 5;
 
     /**
      * The timer to use for tests.
@@ -36,7 +36,7 @@ class Evaluator {
 
         // resolve time span required to achieve a percent uncertainty of at most 1%
         // http://spiff.rit.edu/classes/phys273/uncert/uncert.html
-        this.minTime = Math.max(this._timer.resolution / 2 / 0.01, 0.05);
+        this._minTime = Math.max(this._timer.resolution / 2 / 0.01, 0.05);
     }
 
     /**
@@ -46,12 +46,9 @@ class Evaluator {
      */
     evaluate(test: Test, callback: Callback): void {
 
+        test.setup(this._timer);
+
         var self = this;
-
-        test.sample = [];
-        test.timer = this._timer;
-        test.timestamp = new Date();
-
         (function next() {
             self._cycle(test, (err: Error, period?: number) => {
                 if(err) return callback(err);
@@ -73,7 +70,7 @@ class Evaluator {
                 // operations per second
                 test.hz = 1 / test.mean;
 
-                if(size >= self.minSamples && (new Date().getTime() - test.timestamp.getTime()) / 1e3 >= self.maxTime) {
+                if(size >= self._minSamples && (new Date().getTime() - test.timestamp.getTime()) / 1e3 >= self.maxTime) {
                     // If we have met the minimum number of samples and exceeded the max allocated time, then we are finished
                     callback();
                 }
@@ -98,8 +95,10 @@ class Evaluator {
 
             // seconds per operation
             var period = test.clocked / test.count;
-            if(test.clocked < this.minTime) {
-                test.count += Math.ceil((this.minTime - test.clocked) / period);
+            if(test.clocked < this._minTime) {
+                // The test execution time was less than the minimum time required so increase the number of times the
+                // test is executed in order to reach minTime.
+                test.count += Math.ceil((this._minTime - test.clocked) / period);
                 this._cycle(test, callback);
             }
             else {

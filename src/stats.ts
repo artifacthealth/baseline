@@ -40,6 +40,60 @@ module Stats {
     }
 
     /**
+     * Performs a Mann-Whitney U-Test
+     * @param sample1 The first sample.
+     * @param sample2 The second sample.
+     * @returns Returns `-1` if sample1 is less than sample2, `1` sample1 is greater than sample2, and `0` if indeterminate.
+     */
+    export function mannWhitneyUTest(sample1: number[], sample2: number[]): number {
+
+        // Exit early if comparing the same samples
+        if (sample1 === sample2) {
+            return 0;
+        }
+
+        var size1 = sample1.length,
+            size2 = sample2.length,
+            maxSize = Math.max(size1, size2),
+            minSize = Math.min(size1, size2),
+            u1 = getU(sample1, sample2),
+            u2 = getU(sample2, sample1),
+            u = Math.min(u1, u2);
+
+        function getScore(xA: number, sampleB: number[]) {
+
+            return sampleB.reduce((total, xB) => {
+                return total + (xB > xA ? 0 : xB < xA ? 1 : 0.5);
+            }, 0);
+        }
+
+        function getU(sampleA: number[], sampleB: number[]) {
+
+            return sampleA.reduce((total, xA) => {
+                return total + getScore(xA, sampleB);
+            }, 0);
+        }
+
+        function getZ(u: number) {
+
+            return (u - ((size1 * size2) / 2)) / Math.sqrt((size1 * size2 * (size1 + size2 + 1)) / 12);
+        }
+
+        // Reject the null hyphothesis the two samples come from the
+        // same population (i.e. have the same median) if...
+        if (size1 + size2 > 30) {
+            // ...the z-stat is greater than 1.96 or less than -1.96
+            // http://www.statisticslectures.com/topics/mannwhitneyu/
+            var zStat = getZ(u);
+            return Math.abs(zStat) > 1.96 ? (u == u1 ? 1 : -1) : 0;
+        }
+
+        // ...the U value is less than or equal the critical U value.
+        var critical = maxSize < 5 || minSize < 3 ? 0 : uTable[maxSize][minSize - 3];
+        return u <= critical ? (u == u1 ? 1 : -1) : 0;
+    }
+
+    /**
      * T-Distribution two-tailed critical values for 95% confidence.
      * For more info see http://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm.
      */
@@ -57,7 +111,7 @@ module Stats {
      * Critical Mann-Whitney U-values for 95% confidence.
      * For more info see http://www.saburchill.com/IBbiology/stats/003.html.
      */
-    export var uTable: { [num: number]: number[] } = {
+    var uTable: { [num: number]: number[] } = {
         '5': [0, 1, 2],
         '6': [1, 2, 3, 5],
         '7': [1, 3, 5, 6, 8],

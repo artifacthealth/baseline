@@ -33,7 +33,7 @@ class Timer {
             count = 30,
             sample: number[] = [];
 
-        // get average smallest measurable time
+        // get mean smallest measurable time
         while (count--) {
             measured = this.stop(this.start());
             if (measured > 0) {

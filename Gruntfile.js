@@ -15,11 +15,6 @@ module.exports = function(grunt) {
                 src: [
                     "build/"
                 ]
-            },
-            lib: {
-                src: [
-                    "lib/"
-                ]
             }
         },
 
@@ -60,8 +55,7 @@ module.exports = function(grunt) {
     });
 
     // Default task(s).
-    grunt.registerTask("default", [ "build", "lib", "tests" ]);
+    grunt.registerTask("default", [ "build", "tests" ]);
     grunt.registerTask("build", [ "clean:build", "typescript:build" ]);
-    grunt.registerTask("lib", [ "clean:lib" ]);
     grunt.registerTask("tests", [ "typescript:tests", "mochaTest:tests" ]);
 };
