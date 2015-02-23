@@ -15,6 +15,7 @@ import Reporter = require("./reporter");
 import Evaluator = require("./evaluator");
 import NodeTimer = require("./nodeTimer");
 import Runner = require("./runner");
+import DefaultReporter = require("./reporters/default");
 
 class Baseline {
 
@@ -48,10 +49,12 @@ class Baseline {
         this._suite = new Suite();
         this._loadFiles();
 
-        var evaluator = new Evaluator(new NodeTimer());
+        var reporter = this.reporter || new DefaultReporter();
+
+        var evaluator = new Evaluator(new NodeTimer(), reporter);
         evaluator.maxTime = this.maxTime;
 
-        var runner = new Runner(this.reporter, evaluator);
+        var runner = new Runner(reporter, evaluator);
         runner.run(this._suite, callback);
     }
 
@@ -84,7 +87,19 @@ class Baseline {
 
         context.suite.skip = (title: string, block: () => void): Suite => {
             var suite = context.suite(title, block);
-            suite.skip = true;
+            suite.pending = true;
+            return suite;
+        }
+
+        context.compare = (title: string, block: () => void): Suite => {
+            var suite = context.suite(title, block);
+            suite.compare = true;
+            return suite;
+        }
+
+        context.compare.skip = (title: string, block: () => void): Suite => {
+            var suite = context.suite.skip(title, block);
+            suite.compare = true;
             return suite;
         }
 
@@ -97,7 +112,7 @@ class Baseline {
 
         context.test.skip = (title: string, action: ActionCallback): Test => {
             var test = global.test(title, action);
-            test.skip = true;
+            test.pending = true;
             return test;
         }
 

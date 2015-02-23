@@ -12,3 +12,13 @@ interface ResultCallback<T> extends Callback {
 interface ActionCallback {
     (done?: Callback): void;
 }
+
+interface Lookup<T> {
+    [name: string]: T;
+}
+
+declare const enum SuiteType {
+    Normal,
+    Compare,
+    Baseline
+}

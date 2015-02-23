@@ -22,11 +22,9 @@ class Runnable {
 
     constructor(protected action: ActionCallback) {
 
-        if(!action) {
-            throw new Error("Missing require argument 'action'.");
+        if(action) {
+            this.async = !!action.length;
         }
-
-        this.async = !!action.length;
     }
 
     /**
@@ -37,6 +35,10 @@ class Runnable {
 
         var finished = false,
             self = this;
+
+        if(!this.action) {
+            process.nextTick(callback);
+        }
 
         function done(err?: Error) {
 

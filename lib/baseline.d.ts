@@ -7,8 +7,13 @@ declare var suite: {
     skip(title: string, block: () => void): void;
 }
 
+declare var compare: {
+    (title: string, block: () => void): void;
+    skip(title: string, block: () => void): void;
+}
+
 declare var test: {
-    (title: string, action: () => void): void;
+    (title: string, action?: () => void): void;
     skip(title: string, action: () => void): void;
 }
 

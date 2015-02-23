@@ -1,9 +1,21 @@
+/*!
+ * The code in this module is a modified version of code originally from
+ * Benchmark.js. Original Copyright follows.
+ *
+ * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
+ * Copyright 2010-2015 Mathias Bynens <http://mths.be/>
+ * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
+ * Modified by John-David Dalton <http://allyoucanleet.com/>
+ * Available under MIT license <http://mths.be/mit>
+ */
+
 /// <reference path="./types.d.ts" />
 
 import async = require("async");
 import Test = require("./test");
 import Stats = require("./stats");
 import Timer = require("./timer");
+import Reporter = require("./reporter");
 
 /**
  * Class for evaluating the performance of a Test.
@@ -30,13 +42,16 @@ class Evaluator {
      */
     private _timer: Timer;
 
-    constructor(timer: Timer) {
+    private _reporter: Reporter;
+
+    constructor(timer: Timer, reporter?: Reporter) {
 
         this._timer = timer;
 
         // resolve time span required to achieve a percent uncertainty of at most 1%
         // http://spiff.rit.edu/classes/phys273/uncert/uncert.html
         this._minTime = Math.max(this._timer.resolution / 2 / 0.01, 0.05);
+        this._reporter = reporter;
     }
 
     /**
@@ -70,6 +85,10 @@ class Evaluator {
                 // operations per second
                 test.hz = 1 / test.mean;
 
+                // report cycle results
+                self._reporter && self._reporter.cycle(test);
+
+                // decide if we need another cycle or not
                 if(size >= self._minSamples && (new Date().getTime() - test.timestamp.getTime()) / 1e3 >= self.maxTime) {
                     // If we have met the minimum number of samples and exceeded the max allocated time, then we are finished
                     callback();

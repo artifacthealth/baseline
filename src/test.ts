@@ -61,12 +61,15 @@ class Test extends Runnable {
     timer: Timer;
 
     /**
-     * Indicates if the test is skipped.
+     * Indicates if the test is pending.
      */
-    skip: boolean;
+    pending: boolean;
 
-    constructor(public title: string, action: ActionCallback) {
+
+    constructor(public title: string, action?: ActionCallback) {
         super(action);
+
+        this.pending = !action;
     }
 
     /**
