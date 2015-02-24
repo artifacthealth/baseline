@@ -16,6 +16,8 @@ import Runnable = require("./runnable");
 
 class Suite {
 
+    parent: Suite;
+
     tests: Test[] = [];
     suites: Suite[] = [];
 
@@ -30,7 +32,7 @@ class Suite {
      * Indicates if the suite is pending.
      */
     get pending(): boolean {
-        return this._pending || (this._parent && this._parent.pending);
+        return this._pending || (this.parent && this.parent.pending);
     }
 
     set pending(value: boolean) {
@@ -38,7 +40,6 @@ class Suite {
     }
 
     private _pending: boolean;
-    private _parent: Suite;
 
     constructor(public title: string = "") {
 
@@ -46,11 +47,12 @@ class Suite {
 
     addSuite(suite: Suite): void {
         this.suites.push(suite);
-        suite._parent = this;
+        suite.parent = this;
     }
 
     addTest(test: Test): void {
         this.tests.push(test);
+        test.parent = this;
     }
 
     addBefore(action: ActionCallback): void {

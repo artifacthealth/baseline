@@ -16,6 +16,7 @@ import Evaluator = require("./evaluator");
 import NodeTimer = require("./nodeTimer");
 import Runner = require("./runner");
 import DefaultReporter = require("./reporters/default");
+import Results = require("./results");
 
 class Baseline {
 
@@ -30,6 +31,11 @@ class Baseline {
     reporter: Reporter;
 
     /**
+     * The minimum percent difference from baseline that is reported as a change.
+     */
+    threshold = 10;
+
+    /**
      * The maximum time a test is allowed to run, in seconds, before finishing
      */
     maxTime = 2;
@@ -40,22 +46,56 @@ class Baseline {
     timeout: number;
 
     /**
+     * Full path to file to use for baseline.
+     */
+    baselinePath: string;
+
+    /**
+     * Indicates whether or not the baseline should be updated.
+     */
+    updateBaseline = false;
+
+    /**
+     * Indicates whether or not to use colors in reporter. If undefined, colors are used if supported.
+     * in the terminal.
+     */
+    useColors: boolean;
+
+    /**
      * The root suite. Top level suites contained in 'files' are added to the root suite.
      */
     private _suite: Suite;
 
-    run(callback: Callback): void {
+    run(callback: ResultCallback<number>): void {
 
         this._suite = new Suite();
         this._loadFiles();
 
-        var reporter = this.reporter || new DefaultReporter();
+        Results.load(this.baselinePath, (err: Error, baseline?: Results) => {
+            if(err) return callback(err);
 
-        var evaluator = new Evaluator(new NodeTimer(), reporter);
-        evaluator.maxTime = this.maxTime;
+            var reporter = this.reporter || new DefaultReporter();
 
-        var runner = new Runner(reporter, evaluator);
-        runner.run(this._suite, callback);
+            var evaluator = new Evaluator(new NodeTimer(), reporter);
+            evaluator.maxTime = this.maxTime;
+
+            var runner = new Runner(reporter, evaluator, baseline);
+            runner.threshold = this.threshold;
+
+            runner.run(this._suite, (err: Error, slower?: number) => {
+                if(err) return callback(err);
+
+                if((!baseline || this.updateBaseline) && this.baselinePath) {
+                    Results.fromSuite(this._suite).save(this.baselinePath, (err: Error) => {
+                        if (err) return callback(err);
+                        callback(null, slower);
+                    });
+                    return;
+                }
+
+                callback(null, slower);
+            });
+        });
     }
 
     private _loadFiles(): void {

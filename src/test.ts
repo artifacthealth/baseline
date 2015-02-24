@@ -4,11 +4,14 @@ import async = require("async");
 import Runnable = require("./runnable");
 import Timer = require("./timer");
 import Stats = require("./stats");
+import Suite = require("./suite");
 
 /**
  * Class that represents a benchmarking test.
  */
 class Test extends Runnable {
+
+    parent: Suite;
 
     /**
      * The number of times a test was executed.
@@ -84,7 +87,7 @@ class Test extends Runnable {
     }
 
     /**
-     * Determines if a test is faster than another.
+     * Determines if a test is faster than another benchmark.
      * @param other The test to compare.
      * @returns Returns '-1' if slower than 'other', '1' if faster than 'other', and '0' if indeterminate.
      */

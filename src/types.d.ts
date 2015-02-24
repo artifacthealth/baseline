@@ -16,9 +16,3 @@ interface ActionCallback {
 interface Lookup<T> {
     [name: string]: T;
 }
-
-declare const enum SuiteType {
-    Normal,
-    Compare,
-    Baseline
-}

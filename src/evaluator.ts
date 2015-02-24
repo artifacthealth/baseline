@@ -68,6 +68,7 @@ class Evaluator {
             self._cycle(test, (err: Error, period?: number) => {
                 if(err) return callback(err);
 
+                // add the cycle execution time to the list of sample
                 var size = test.sample.push(period);
 
                 // sample mean (estimate of the population mean)

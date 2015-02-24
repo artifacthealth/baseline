@@ -21,10 +21,17 @@ import Test = require("./test");
  * Reporter interface.
  */
 interface Reporter {
+
+    /**
+     * Indicates whether or not to use colors in reporter. If undefined, colors are used if supported
+     * in the terminal.
+     */
+    //useColors: boolean;
+
     /**
      * Called at start.
      */
-    start(): void;
+    start(baselineTimestamp: Date): void;
 
     /**
      * Called at end.
@@ -46,11 +53,11 @@ interface Reporter {
     /**
      * Called at the conclusion of a comparison suite once for each test reporting the ranking.
      * @param test The test.
-     * @param rank Description of the rank for the test.
-     * @param edge Has a value of '1' to indicate the test is the fastest, '-1' to indicate it's the slowest,
+     * @param rank Has a value of '1' to indicate the test is the fastest, '-1' to indicate it's the slowest,
      * or '0' to indicate it's in-between.
+     * @param percentSlower The percent slower than the fastest test.
      */
-    rank(test: Test, rank: string, edge: number): void;
+    rank(test: Test, rank: number, percentSlower: number): void;
 
     /**
      * Called for pending tests.
@@ -74,7 +81,7 @@ interface Reporter {
      * Called when a test ends.
      * @param test The test.
      */
-    testEnd(test: Test): void;
+    testEnd(test: Test, percentChange: number): void;
 }
 
 module Reporter {
@@ -109,8 +116,9 @@ module Reporter {
             isatty && process.stdout.write('\u001b[0G');
         }
 
-        export function CR() {
+        export function carriageReturn() {
             if (isatty) {
+                cursor.deleteLine();
                 cursor.beginningOfLine();
             } else {
                 process.stdout.write('\r');
@@ -124,7 +132,9 @@ module Reporter {
         'slowest': 31,
         'suite': 0,
         'test': 0,
-        'pending': 36
+        'pending': 36,
+        'faster': 32,
+        'slower': 31
     }
 
     export function color(type: string, str: string): string {

@@ -1,5 +1,5 @@
 /*!
- * The code for test comparison is a modified version of code
+ * The code for '_compareTests' is a modified version of code
  * originally from Benchmark.js. Original Copyright follows.
  *
  * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
@@ -19,27 +19,36 @@ import Test = require("./test");
 import Runnable = require("./runnable");
 import NodeTimer = require("./nodeTimer");
 import DefaultReporter = require("./reporters/default");
+import Results = require("./results");
 
 class Runner {
 
+    /**
+     * The minimum percent difference from baseline that is reported as a change.
+     */
+    threshold = 10;
+
     private _evaluator: Evaluator;
     private _reporter: Reporter;
+    private _baseline: Results;
+    private _slower = 0;
 
-    constructor(reporter?: Reporter, evaluator?: Evaluator) {
+    constructor(reporter?: Reporter, evaluator?: Evaluator, baseline?: Results) {
 
         this._reporter = reporter || new DefaultReporter();
         this._evaluator = evaluator || new Evaluator(new NodeTimer(), this._reporter);
+        this._baseline = baseline;
     }
 
-    run(suite: Suite, callback: Callback): void {
+    run(suite: Suite, callback: ResultCallback<number>): void {
 
-        this._reporter.start();
+        this._reporter.start(this._baseline ? this._baseline.timestamp : undefined);
 
         this._runSuite(suite, (err: Error) => {
             if(err) return callback(err);
 
             this._reporter.end();
-            callback();
+            callback(null, this._slower);
         });
     }
 
@@ -97,7 +106,25 @@ class Runner {
                 async.eachSeries(suite.afterEach, (action: Runnable, done: Callback) => action.run(done), (err: Error) => {
                     if(err) return callback(err);
 
-                    this._reporter.testEnd(test);
+                    if(this._baseline) {
+                        var hz = this._getHz(test),
+                            baselineHz = this._baseline.getBaselineHz(test),
+                            percentChange: number;
+                    }
+
+                    if(baselineHz) {
+                        percentChange = ((hz / baselineHz) - 1) * 100;
+                        if(!isFinite(percentChange) || Math.abs(percentChange) < this.threshold) {
+                            percentChange = undefined;
+                        }
+                        else {
+                            if(percentChange < 0) {
+                                this._slower++;
+                            }
+                        }
+                    }
+
+                    this._reporter.testEnd(test, percentChange);
                     callback();
                 });
             });
@@ -115,22 +142,19 @@ class Runner {
         tests.forEach((test: Test) => {
 
             var hz = this._getHz(test),
-                percent = (1 - (hz / fastestHz)) * 100,
-                rank: string,
-                edge = 0;
+                percentSlower = (1 - (hz / fastestHz)) * 100,
+                rank = 0;
 
             if(fastest.indexOf(test) !== -1) {
-                rank = "fastest";
-                edge = 1;
+                rank = 1;
             }
             else {
-                rank = isFinite(hz) ? Reporter.formatNumber(percent) + '% slower' : '';
                 if(slowest.indexOf(test) !== -1) {
-                    edge = -1;
+                    rank = -1;
                 }
             }
 
-            this._reporter.rank(test, rank, edge);
+            this._reporter.rank(test, rank, rank !== 1 && isFinite(hz) ? percentSlower : undefined);
         });
     }
 
