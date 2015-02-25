@@ -57,9 +57,9 @@ Regexp vs indexOf
 Completed 2 tests.
 ```
 
-Each test is executed repeatedly until a statistically significant result can be established, and is reported in
+Each test is executed repeatedly until a statistically significant result can be established. The result is reported in
 operations per second along with the relative margin of error. All statistical calculations are based on the
-[Benchmark.js](http://benchmarkjs.com/) library, the brains behind [jsperf.com](https://jsperf.com/).
+[Benchmark.js](http://benchmarkjs.com/) library.
 
 
 <a name="establishing-a-baseline" />
@@ -76,7 +76,7 @@ $ baseline -b results.json test.js
 <a name="comparing-against-a-baseline" />
 ## Comparing against a baseline
 
-Once a baseline file has been created, if the program is run with the `-b` options again, the tests will be compared against
+Once a baseline file has been created, if the program is run with the `-b` option again, the tests will be compared against
 the established baseline. If the change in the performance of a test compared to its baseline is at least 10%,
 the test is reported as changed.
 
@@ -114,8 +114,8 @@ $ baseline -b results.json -u test.js
 ## Comparison tests
 
 Similar to [jsperf.com](https://jsperf.com/), Baseline is able to compare the performance of several different tests
-and report, with statistical significance, which tests are fastest, which are slowest, and by how much. Using the
-`compare` function instead of `suite` creates a comparison test.
+and report, with statistical significance, which tests are fastest, which are slowest, and by how much. Use the
+`compare` function instead of `suite` to create a comparison test.
 
 ```
 compare("Regexp vs indexOf", function() {
