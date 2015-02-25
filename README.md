@@ -14,7 +14,7 @@ $ npm install -g baseline
 ## Test suites
 
 Test suites follow a paradigm similar to the [mocha](http://mochajs.org/) unit test framework. Suppose you have a file
-has-substring.bench.js:
+test.js:
 
 ```
 suite("Regexp vs indexOf", function() {
@@ -35,7 +35,7 @@ suite("Regexp vs indexOf", function() {
 We then run baseline, passing it the name of the file containing the test suite we want to execute:
 
 ```
-$ baseline has-substring.bench.js
+$ baseline test.js
 
 Regexp vs indexOf
   Regexp: 15,297,117 ops/sec ±1.27%
@@ -52,7 +52,7 @@ results to determine if performance has changed. To establish a baseline, run Ba
 the name of the file to use.
 
 ```
-$ baseline -b has-substring.baseline.json has-substring.bench.js
+$ baseline -b results.json test.js
 ```
 
 ## Comparing against a baseline
@@ -63,7 +63,7 @@ threshold of 10%, the test is reported as changed. The threshold can be adjusted
 of running Baseline with a threshold of 5%:
 
 ```
-$ baseline -b has-substring.baseline.json -T 5 has-substring.bench.js
+$ baseline -b results.json -T 5 test.js
 
 Tests will be compared to baseline established on 2/24/2015 at 10:11:58 PM.
 
