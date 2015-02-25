@@ -1,3 +1,7 @@
+interface Callback {
+    (err?: Error): void;
+}
+
 interface ActionCallback {
     (done?: Callback): void;
 }
@@ -13,8 +17,8 @@ declare var compare: {
 }
 
 declare var test: {
-    (title: string, action?: () => void): void;
-    skip(title: string, action: () => void): void;
+    (title: string, action?: ActionCallback): void;
+    skip(title: string, action: ActionCallback): void;
 }
 
 declare function after(action: ActionCallback): void;

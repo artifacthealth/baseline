@@ -1,6 +1,6 @@
 {
   "name": "baseline",
-  "description": "A benchmarking library that allows for establishing baselines to compare performance to past results.",
+  "description": "A benchmarking library that allows performance to be compared to an established baseline.",
   "version": "0.1.0",
   "author": {
     "name": "Artifact Health, LLC",

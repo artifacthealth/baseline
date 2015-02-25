@@ -53,8 +53,8 @@ class Runnable {
             callback(err);
         }
 
-        this._callback = done;
         if(this.async) {
+            this._callback = done;
             this._resetTimeout();
         }
 
@@ -79,8 +79,8 @@ class Runnable {
         var ms = this.timeout || 60000;
         this._clearTimeout();
 
-        this._timeoutTimer = setTimeout(function () {
-            this._callback(new Error('timeout of ' + ms + 'ms exceeded. Ensure the done() callback is being called in this measure.'));
+        this._timeoutTimer = setTimeout(() => {
+            this._callback(new Error('timeout of ' + ms + 'ms exceeded. Ensure the done() callback is being called in this test.'));
             this.timedOut = true;
         }, ms);
     }

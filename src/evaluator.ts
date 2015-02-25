@@ -15,7 +15,7 @@ import async = require("async");
 import Test = require("./test");
 import Stats = require("./stats");
 import Timer = require("./timer");
-import Reporter = require("./reporter");
+import Reporter = require("./reporters/reporter");
 
 /**
  * Class for evaluating the performance of a Test.

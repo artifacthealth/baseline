@@ -1,9 +1,20 @@
+/*!
+ * The code for the 'formatNumber' function is a modified version of
+ * code originally from Benchmark.js. Original Copyright follows.
+ *
+ * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
+ * Copyright 2010-2015 Mathias Bynens <http://mths.be/>
+ * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
+ * Modified by John-David Dalton <http://allyoucanleet.com/>
+ * Available under MIT license <http://mths.be/mit>
+ */
+
 /// <reference path="../types.d.ts" />
 /// <reference path="../../typings/supports-color.d.ts" />
 import tty = require('tty');
 import supportsColor = require("supports-color");
 
-import Reporter = require("../reporter");
+import Reporter = require("./reporter");
 import Suite = require("../suite");
 import Test = require("../test");
 
@@ -67,7 +78,7 @@ class ReporterBase implements Reporter {
 
     protected color(type: string, str: string): string {
 
-        if ((this.useColors === undefined && !supportsColor) || !this.useColors) return str;
+        if ((this.useColors === undefined && !supportsColor) || this.useColors === false) return str;
         return '\u001b[' + ReporterBase.colors[type] + 'm' + str + '\u001b[0m';
     }
 
@@ -94,3 +105,5 @@ class ReporterBase implements Reporter {
     }
 
 }
+
+export = ReporterBase;

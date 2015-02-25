@@ -13,12 +13,12 @@
 
 import async = require("async");
 import Evaluator = require("./evaluator");
-import Reporter = require("./reporter");
+import Reporter = require("./reporters/reporter");
 import Suite = require("./suite");
 import Test = require("./test");
 import Runnable = require("./runnable");
 import NodeTimer = require("./nodeTimer");
-import DefaultReporter = require("./reporters/default");
+import DefaultReporter = require("./reporters/defaultReporter");
 import Results = require("./results");
 
 class Runner {
@@ -99,7 +99,7 @@ class Runner {
             if (err) return callback(err);
 
             // evaluate the test
-            this._evaluator.evaluate(test, (err) => {
+            this._evaluator.evaluate(test, (err: Error) => {
                 if (err) return callback(err);
 
                 // execute "afterEach" hooks
@@ -113,7 +113,7 @@ class Runner {
                     }
 
                     if(baselineHz) {
-                        percentChange = ((hz / baselineHz) - 1) * 100;
+                        percentChange = ((hz - baselineHz) / baselineHz) * 100;
                         if(!isFinite(percentChange) || Math.abs(percentChange) < this.threshold) {
                             percentChange = undefined;
                         }

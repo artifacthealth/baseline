@@ -12,13 +12,14 @@ program
     .version(JSON.parse(loadPackageFile()).version)
     .usage('[options] [files]')
     .option('-b, --baseline <file>', 'full path to file to use for baseline')
+    .option('-c, --colors', 'force enabling of colors')
+    .option('-C, --no-colors', 'force disabling of colors')
     .option('-m, --min-time <seconds>', 'minimum time a test runs in seconds [2]')
+    .option('-O, --reporter-options <k=v,k2=v2,...>', 'reporter-specific options')
     .option('-R, --reporter <name>', 'specify the reporter to use')
     .option('-t, --timeout <ms>', 'set timeout in milliseconds [60000]')
     .option('-T, --threshold <seconds>', 'minimum reported percent difference from baseline [10]')
     .option('-u, --update', 'update baseline')
-    .option('--colors', 'force enabling of colors')
-    .option('--no-colors', 'force disabling of colors')
     .option('--recursive', 'include sub directories')
     .option('--reporters', 'display available reporters');
 
@@ -42,12 +43,12 @@ if(options.baseline !== undefined) {
 }
 
 // --no-colors
-if (!options.colors) {
+if (options.colors === false) {
     baseline.useColors = false;
 }
 
 // --colors
-if (~process.argv.indexOf('--colors')) {
+if (~process.argv.indexOf('--colors') || ~process.argv.indexOf('-c')) {
     baseline.useColors = true;
 }
 
@@ -80,19 +81,31 @@ args.forEach(function(arg){
 });
 baseline.files = files;
 
+// reporter options
+var reporterOptions: any = {};
+if (options.reporterOptions !== undefined) {
+    options.reporterOptions.split(",").forEach(function(opt: string) {
+        var L = opt.split("=");
+        if (L.length != 2) {
+            throw new Error("invalid reporter option '" + opt + "'");
+        }
+        reporterOptions[L[0]] = L[1];
+    });
+}
+
 // load reporter
 if(options.reporter) {
     try {
-        var reporter = require('../lib/reporters/' + options.reporter);
+        var Reporter = require(__dirname + '/reporters/' + options.reporter + "Reporter");
     } catch (err) {
         try {
-            reporter = require(options.reporter);
+            Reporter = require(options.reporter);
         } catch (err) {
             throw new Error('reporter "' + options.reporter + '" does not exist');
         }
     }
+    baseline.reporter = new Reporter(reporterOptions);
 }
-baseline.reporter = reporter;
 
 baseline.run((err: Error, slower?: number) => {
     if(err) throw err;

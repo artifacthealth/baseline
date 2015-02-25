@@ -11,11 +11,11 @@ import path = require("path");
 
 import Suite = require("./suite");
 import Test = require("./test");
-import Reporter = require("./reporter");
+import Reporter = require("./reporters/reporter");
 import Evaluator = require("./evaluator");
 import NodeTimer = require("./nodeTimer");
 import Runner = require("./runner");
-import DefaultReporter = require("./reporters/default");
+import DefaultReporter = require("./reporters/defaultReporter");
 import Results = require("./results");
 
 class Baseline {
@@ -75,6 +75,7 @@ class Baseline {
             if(err) return callback(err);
 
             var reporter = this.reporter || new DefaultReporter();
+            reporter.useColors = this.useColors;
 
             var evaluator = new Evaluator(new NodeTimer(), reporter);
             evaluator.maxTime = this.maxTime;
