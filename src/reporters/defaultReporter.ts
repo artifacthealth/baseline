@@ -14,6 +14,7 @@ class DefaultReporter extends ReporterBase {
 
     start(baselineTimestamp: Date): void {
 
+        this.newLine();
         if(baselineTimestamp) {
             this.writeLine("Tests will be compared to baseline established on " + baselineTimestamp.toLocaleDateString()
                                 + " at " + baselineTimestamp.toLocaleTimeString() + ".");

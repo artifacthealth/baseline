@@ -64,7 +64,7 @@ class Runner {
             async.eachSeries(suite.tests, (test: Test, done: Callback) => this._runTest(suite, test, done), (err) => {
                 if(err) return callback(err);
 
-                if(suite.compare) {
+                if(suite.compare && !suite.pending) {
                     this._compareTests(suite);
                 }
 
@@ -140,6 +140,8 @@ class Runner {
         var fastestHz = this._getHz(fastest[0]);
 
         tests.forEach((test: Test) => {
+
+            if(test.pending) return;
 
             var hz = this._getHz(test),
                 percentSlower = (1 - (hz / fastestHz)) * 100,

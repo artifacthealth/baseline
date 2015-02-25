@@ -46,3 +46,4 @@ compare("Regexp vs indexOf", () => {
         str.indexOf("world");
     });
 });
+
