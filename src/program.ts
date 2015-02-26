@@ -26,6 +26,7 @@ program
 program.on('reporters', () => {
     console.log();
     console.log(' default - the default reporter');
+    console.log(' minimal - only reports results for tests changed from baseline');
     console.log();
     process.exit();
 });

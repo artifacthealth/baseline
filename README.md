@@ -11,6 +11,7 @@ This is a work in progress. Check back in a couple weeks.
 * [`Updating a baseline`](#updating-a-baseline)
 * [`Comparison tests`](#comparison-tests)
 * [`Asynchronous tests`](#asynchronous-tests)
+* [`Hooks`](#hooks)
 
 
 <a name="installation" />
@@ -53,7 +54,6 @@ Regexp vs indexOf
   Regexp: 15,297,117 ops/sec ±1.27%
   indexOf: 21,860,061 ops/sec ±0.68%
 
-
 Completed 2 tests.
 ```
 
@@ -88,7 +88,6 @@ Tests will be compared to baseline established on 2/24/2015 at 10:11:58 PM.
 Regexp vs indexOf
   Regexp: 13,614,434 ops/sec ±0.73% (11% slower than baseline)
   indexOf: 21,564,642 ops/sec ±1.11%
-
 
 Completed 2 tests, 1 slower.
 ```
@@ -142,7 +141,6 @@ Regexp vs indexOf
   Regexp: 14,951,082 ops/sec ±1.67% (28% slower)
   indexOf: 20,680,257 ops/sec ±0.87% (fastest)
 
-
 Completed 2 tests.
 ```
 
@@ -152,7 +150,7 @@ Note that comparison tests are never compared to a baseline, even if the `-b` op
 <a name="asynchronous-tests" />
 ## Asynchronous tests
 
-Similar to [mocha](http://mochajs.org/), asynchronous tests are accomplished by include a callback, usually called
+Similar to [mocha](http://mochajs.org/), asynchronous tests are accomplished by including a callback, usually called
 `done`, as a parameter to the test function. The callback must be called once the test has completed.
 
 ```
@@ -176,4 +174,61 @@ Baseline will automatically determine if the test should be execute as a synchro
 absence or presence of the callback in the test function. Also note that the callback accepts an `Error` object as a
 parameter.
 
+
+<a name="hooks" />
+## Hooks
+Baseline provides the hooks before(), after(), beforeEach(), afterEach(), that can be used to setup and cleanup tests.
+During a test cycle, an individual test will be executed multiple times. Hooks must be written to take into account that
+they will not be executed around each execution of a test, but rather around a series of executions.
+
+```
+suite('hooks', function() {
+  before(function() {
+    // runs before all tests in this block
+  });
+  after(function(){
+    // runs after all tests in this block
+  });
+  beforeEach(function(){
+    // runs before the first iteration of each test in this block
+  });
+  afterEach(function(){
+    // runs after the last iteration of each test in this block
+  });
+  // test cases
+});
+```
+
+
+<a name="pending-tests" />
+## Pending tests
+Tests that do not have a callback are considered pending and are used to document tests that will be implemented in the
+future.
+
+```
+suite("pending", function() {
+
+    test("will be implemented later");
+});
+```
+
+To temporarily skip a test, adding `.skip` to a test will put the test in a pending state and skip execution.
+
+```
+suite("Regexp vs indexOf", function() {
+
+    // other cases
+
+    test.skip("indexOf", function() {
+        // this test will not be executed
+    });
+});
+```
+
+
+## Reporters
+
+### Default
+
+The default reporter outputs results for each test case, including comparison tests.
 

@@ -14,6 +14,7 @@ class DefaultReporter extends ReporterBase {
 
     start(baselineTimestamp: Date): void {
 
+        this.newLine();
         if(baselineTimestamp) {
             this.writeLine("Tests will be compared to baseline established on " + baselineTimestamp.toLocaleDateString()
                                 + " at " + baselineTimestamp.toLocaleTimeString() + ".");
@@ -23,7 +24,6 @@ class DefaultReporter extends ReporterBase {
 
     end(): void {
 
-        this.newLine();
         var msg = "Completed " + this._tests + " tests";
         if(this._pending > 0) {
             msg += ", " + this.color("pending", this._pending + " pending");
@@ -36,6 +36,7 @@ class DefaultReporter extends ReporterBase {
         }
         msg += "."
         this.writeLine(msg);
+        this.newLine();
     }
 
     suiteStart(suite: Suite): void {

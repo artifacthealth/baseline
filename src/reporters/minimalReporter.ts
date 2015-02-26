@@ -20,6 +20,11 @@ class MinimalReporter extends ReporterBase {
 
     private _state: SuiteState[] = [];
 
+    start(baselineTimestamp: Date): void {
+
+        this.newLine();
+    }
+
     end(): void {
 
         this.carriageReturn();
@@ -38,6 +43,7 @@ class MinimalReporter extends ReporterBase {
         }
         msg += "."
         this.writeLine(msg);
+        this.newLine();
     }
 
     suiteStart(suite: Suite): void {
