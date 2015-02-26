@@ -12,6 +12,8 @@ This is a work in progress. Check back in a couple weeks.
 * [`Comparison tests`](#comparison-tests)
 * [`Asynchronous tests`](#asynchronous-tests)
 * [`Hooks`](#hooks)
+* [`Pending tests`](#pending-tests)
+* [`Reporters`](#reporters)
 
 
 <a name="installation" />
@@ -226,9 +228,12 @@ suite("Regexp vs indexOf", function() {
 ```
 
 
+<a name="reporters" />
 ## Reporters
 
 ### Default
 
 The default reporter outputs results for each test case, including comparison tests.
+
+![Default Reporter](http://url/to/img.png)
 

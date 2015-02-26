@@ -1,6 +1,6 @@
 /// <reference path="../lib/baseline.d.ts"/>
 
-compare("Regexp vs indexOf", () => {
+suite("Regexp vs indexOf", () => {
 
     var str = "hello world!";
     var reg = /world/;
