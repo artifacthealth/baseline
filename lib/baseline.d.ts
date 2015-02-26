@@ -2,10 +2,6 @@ interface Callback {
     (err?: Error): void;
 }
 
-interface ActionCallback {
-    (done?: Callback): void;
-}
-
 declare var suite: {
     (title: string, block: () => void): void;
     skip(title: string, block: () => void): void;
@@ -17,11 +13,11 @@ declare var compare: {
 }
 
 declare var test: {
-    (title: string, action?: ActionCallback): void;
-    skip(title: string, action: ActionCallback): void;
+    (title: string, action?: (done?: Callback) => void): void;
+    skip(title: string, action: (done?: Callback) => void): void;
 }
 
-declare function after(action: ActionCallback): void;
-declare function before(action: ActionCallback): void;
-declare function afterEach(action: ActionCallback): void;
-declare function beforeEach(action: ActionCallback): void;
+declare function after(action: (done?: Callback) => void): void;
+declare function before(action: (done?: Callback) => void): void;
+declare function afterEach(action: (done?: Callback) => void): void;
+declare function beforeEach(action: (done?: Callback) => void): void;

@@ -15,6 +15,11 @@ module.exports = function(grunt) {
                 src: [
                     "build/"
                 ]
+            },
+            lib: {
+                src: [
+                    "lib/**/*.js",
+                ]
             }
         },
 
@@ -44,6 +49,32 @@ module.exports = function(grunt) {
             }
         },
 
+        copy: {
+            build: {
+                files: [
+                    {
+                        expand: true,
+                        src: [
+                            'package.json'
+                        ],
+                        dest: 'build/'
+                    }
+                ]
+            },
+            lib: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'build/src/',
+                        src: [
+                            '**/*.js'
+                        ],
+                        dest: 'lib/'
+                    }
+                ]
+            }
+        },
+
         mochaTest: {
             tests: {
                 options: {
@@ -55,7 +86,8 @@ module.exports = function(grunt) {
     });
 
     // Default task(s).
-    grunt.registerTask("default", [ "build", "tests" ]);
-    grunt.registerTask("build", [ "clean:build", "typescript:build" ]);
+    grunt.registerTask("default", [ "build", "tests", "lib" ]);
+    grunt.registerTask("build", [ "clean:build", "typescript:build", "copy:build" ]);
+    grunt.registerTask("lib", [ "clean:lib", "copy:lib" ])
     grunt.registerTask("tests", [ "typescript:tests", "mochaTest:tests" ]);
 };

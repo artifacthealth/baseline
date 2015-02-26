@@ -1,17 +1,8 @@
+/// <reference path="./types.d.ts" />
+
 import fs = require("fs");
 import Suite = require("./suite");
 import Test = require("./test");
-
-interface SuiteResults {
-    timestamp?: number;
-    tests?: Lookup<number>;
-    suites?: Lookup<SuiteResults>;
-}
-
-interface SuiteMember {
-    title: string;
-    parent: Suite;
-}
 
 class Results {
 
@@ -112,6 +103,19 @@ class Results {
 
         return results;
     }
+}
+
+interface SuiteResults {
+
+    timestamp?: number;
+    tests?: Lookup<number>;
+    suites?: Lookup<SuiteResults>;
+}
+
+interface SuiteMember {
+
+    title: string;
+    parent: Suite;
 }
 
 export = Results;
