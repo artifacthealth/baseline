@@ -75,6 +75,16 @@ module.exports = function(grunt) {
             }
         },
 
+        concat: {
+            lib: {
+                options: {
+                    banner: '#!/usr/bin/env node\n\n'
+                },
+                src: ['build/src/program.js'],
+                dest: 'lib/program.js'
+            }
+        },
+
         mochaTest: {
             tests: {
                 options: {
@@ -88,6 +98,6 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask("default", [ "build", "tests", "lib" ]);
     grunt.registerTask("build", [ "clean:build", "typescript:build", "copy:build" ]);
-    grunt.registerTask("lib", [ "clean:lib", "copy:lib" ])
+    grunt.registerTask("lib", [ "clean:lib", "copy:lib", "concat:lib" ])
     grunt.registerTask("tests", [ "typescript:tests", "mochaTest:tests" ]);
 };

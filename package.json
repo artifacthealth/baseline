@@ -1,7 +1,7 @@
 {
   "name": "baseline",
   "description": "A benchmarking library that allows performance to be compared to an established baseline.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "Artifact Health, LLC",
     "url": "http://www.artifacthealth.com"
@@ -15,6 +15,7 @@
       "type": "Apache-2.0"
     }
   ],
+  "bin": "lib/program.js",
   "main": "lib/baseline.js",
   "scripts": {
     "test": "grunt"
