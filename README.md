@@ -235,5 +235,12 @@ suite("Regexp vs indexOf", function() {
 
 The default reporter outputs results for each test case, including comparison tests.
 
-![Default Reporter](http://url/to/img.png)
+![Default Reporter](https://raw.githubusercontent.com/artifacthealth/baseline/master/docs/img/default-reporter.png)
 
+
+### Minimal
+
+The minimal reporter only reports results for individual tests that have changed from baseline. Otherwise, only the
+summary is reported.
+
+![Default Reporter](https://raw.githubusercontent.com/artifacthealth/baseline/master/docs/img/minimal-reporter.png)
