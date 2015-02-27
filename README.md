@@ -47,23 +47,12 @@ test.js:
 ```
 suite("Sorting Algorithms", function() {
 
-    var expected = [2, 10, 12, 23, 30, 65, 67, 67, 76, 98, 234, 234],
-        result;
-
-    afterEach(function() {
-        for(var i = 0; i < expected.length; i++) {
-            if(result[i] !== expected[i]) {
-                throw new Error("Result is not correct: " + result.toString());
-            }
-        }
-    });
-
     test("Bubble Sort", function() {
-        result = bubbleSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
+        bubbleSort([49, 344, 431, 144, 122, 8, 207, 49, 8, 481, 10, 2]);
     });
 
     test("Insertion Sort", function() {
-        result = insertionSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
+        insertionSort([49, 344, 431, 144, 122, 8, 207, 49, 8, 481, 10, 2]);
     });
 
     function insertionSort(array) {
@@ -153,23 +142,12 @@ and report, with statistical significance, which tests are fastest, which are sl
 ```
 compare("Sorting Algorithms", function() {
 
-    var expected = [2, 10, 12, 23, 30, 65, 67, 67, 76, 98, 234, 234],
-        result;
-
-    afterEach(function() {
-        for(var i = 0; i < expected.length; i++) {
-            if(result[i] !== expected[i]) {
-                throw new Error("Result is not correct: " + result.toString());
-            }
-        }
-    });
-
     test("Bubble Sort", function() {
-        result = bubbleSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
+        bubbleSort([49, 344, 431, 144, 122, 8, 207, 49, 8, 481, 10, 2]);
     });
 
     test("Insertion Sort", function() {
-        result = insertionSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
+        insertionSort([49, 344, 431, 144, 122, 8, 207, 49, 8, 481, 10, 2]);
     });
 
     function insertionSort(array) {
