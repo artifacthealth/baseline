@@ -1,3 +1,14 @@
+/*!
+ * The code for 'resolution' is a modified version of code
+ * originally from Benchmark.js. Original Copyright follows.
+ *
+ * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
+ * Copyright 2010-2015 Mathias Bynens <http://mths.be/>
+ * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
+ * Modified by John-David Dalton <http://allyoucanleet.com/>
+ * Available under MIT license <http://mths.be/mit>
+ */
+
 /// <reference path="./types.d.ts" />
 
 import Stats = require("./stats");
@@ -44,7 +55,6 @@ class Timer {
             }
         }
 
-        // convert to seconds
         return this._resolution = Stats.mean(sample);
     }
 }
