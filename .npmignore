@@ -4,6 +4,7 @@ node_modules
 baseline.iml
 npm-debug.log
 src
+docs
 tests
 typings
 Gruntfile.js

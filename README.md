@@ -5,6 +5,7 @@ This is a work in progress. Check back in a couple weeks.
 
 ## Table of contents
 
+* ['A note on micro-benchmarks'](#micro-benchmarks)
 * [`Installation`](#installation)
 * [`Test suites`](#test-suites)
 * [`Establishing a baseline`](#establishing-a-baseline)
@@ -14,6 +15,18 @@ This is a work in progress. Check back in a couple weeks.
 * [`Hooks`](#hooks)
 * [`Pending tests`](#pending-tests)
 * [`Reporters`](#reporters)
+
+
+<a name="micro-benchmarks" />
+## A note on micro-benchmarks
+
+Baseline cannot be used for micro-benchmarks such as determining if == or === is faster. The time required to call the
+test function is generally greater than the time to execute the test itself. The [Benchmark.js](http://benchmarkjs.com/)
+library is able run micro-benchmarks because it dynamically creates a function, when possible, that compiles the test case into
+the test loop. Baseline does not do this. However, even this technique of dynamically creating the test function is not
+possible for asynchronous tests or tests that reference variables from an outer scope. Regardless, V8 compiler
+optimizations can make micro-benchmarks unreliable. Please see [this video](https://www.youtube.com/watch?v=65-RbBwZQdU)
+for more information.
 
 
 <a name="installation" />
@@ -32,18 +45,34 @@ Test suites follow a paradigm similar to the [mocha](http://mochajs.org/) unit t
 test.js:
 
 ```
-suite("Regexp vs indexOf", function() {
+suite("Sorting Algorithms", function() {
 
-    var str = "hello world!";
-    var reg = /world/;
+    var expected = [2, 10, 12, 23, 30, 65, 67, 67, 76, 98, 234, 234],
+        result;
 
-    test("Regexp", function() {
-        reg.test(str);
+    afterEach(function() {
+        for(var i = 0; i < expected.length; i++) {
+            if(result[i] !== expected[i]) {
+                throw new Error("Result is not correct: " + result.toString());
+            }
+        }
     });
 
-    test("indexOf", function() {
-        str.indexOf("world");
+    test("Bubble Sort", function() {
+        result = bubbleSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
     });
+
+    test("Insertion Sort", function() {
+        result = insertionSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
+    });
+
+    function insertionSort(array) {
+        // implementation of insertion sort
+    }
+
+    function bubbleSort(array) {
+        // implementation of bubble sort
+    }
 });
 ```
 
@@ -52,9 +81,9 @@ We then run Baseline, passing it the name of the file containing the test suite 
 ```
 $ baseline test.js
 
-Regexp vs indexOf
-  Regexp: 15,297,117 ops/sec ±1.27%
-  indexOf: 21,860,061 ops/sec ±0.68%
+Sorting Algorithms
+  Bubble Sort: 6,668,504 ops/sec ±0.66%
+  Insertion Sort: 1,362,380 ops/sec ±0.74%
 
 Completed 2 tests.
 ```
@@ -79,19 +108,22 @@ $ baseline -b results.json test.js
 ## Comparing against a baseline
 
 Once a baseline file has been created, if the program is run with the `-b` option again, the tests will be compared against
-the established baseline. If the change in the performance of a test compared to its baseline is at least 10%,
+the established baseline. If a change in the performance of a test compared to its baseline is at least 10%,
 the test is reported as changed.
+
+Suppose we changed the implementation of the insertion sort algorithm, improving its performance. Running Baseline
+again will result in the following output.
 
 ```
 $ baseline -b results.json test.js
 
-Tests will be compared to baseline established on 2/24/2015 at 10:11:58 PM.
+Tests will be compared to baseline established on 2/26/2015 at 5:25:52 PM.
 
-Regexp vs indexOf
-  Regexp: 13,614,434 ops/sec ±0.73% (11% slower than baseline)
-  indexOf: 21,564,642 ops/sec ±1.11%
+Sorting Algorithms
+  Bubble Sort: 6,733,428 ops/sec ±0.44%
+  Insertion Sort: 1,407,368 ops/sec ±0.70% (19% faster than baseline)
 
-Completed 2 tests, 1 slower.
+Completed 2 tests, 1 faster.
 ```
 
 The default threshold of 10% can be adjusted using the `-T` option. Below is an example of running Baseline with a
@@ -119,18 +151,34 @@ and report, with statistical significance, which tests are fastest, which are sl
 `compare` function instead of `suite` to create a comparison test.
 
 ```
-compare("Regexp vs indexOf", function() {
+compare("Sorting Algorithms", function() {
 
-    var str = "hello world!";
-    var reg = /world/;
+    var expected = [2, 10, 12, 23, 30, 65, 67, 67, 76, 98, 234, 234],
+        result;
 
-    test("Regexp", function() {
-        reg.test(str);
+    afterEach(function() {
+        for(var i = 0; i < expected.length; i++) {
+            if(result[i] !== expected[i]) {
+                throw new Error("Result is not correct: " + result.toString());
+            }
+        }
     });
 
-    test("indexOf", function() {
-        str.indexOf("world");
+    test("Bubble Sort", function() {
+        result = bubbleSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
     });
+
+    test("Insertion Sort", function() {
+        result = insertionSort([10, 30, 98, 23, 65, 234, 67, 234, 12, 2, 76, 67]);
+    });
+
+    function insertionSort(array) {
+        // implementation of insertion sort
+    }
+
+    function bubbleSort(array) {
+        // implementation of bubble sort
+    }
 });
 ```
 
@@ -139,9 +187,9 @@ Executing Baseline with this comparison test results in the following output:
 ```
 $ baseline test.js
 
-Regexp vs indexOf
-  Regexp: 14,951,082 ops/sec ±1.67% (28% slower)
-  indexOf: 20,680,257 ops/sec ±0.87% (fastest)
+Sorting Algorithms
+  Bubble Sort: 6,709,102 ops/sec ±0.51% (fastest)
+  Insertion Sort: 1,432,421 ops/sec ±0.51% (79% slower)
 
 Completed 2 tests.
 ```
@@ -217,11 +265,11 @@ suite("pending", function() {
 To temporarily skip a test, adding `.skip` to a test will put the test in a pending state and skip execution.
 
 ```
-suite("Regexp vs indexOf", function() {
+suite("Sorting Algorithms", function() {
 
     // other cases
 
-    test.skip("indexOf", function() {
+    test.skip("Insertion Sort", function() {
         // this test will not be executed
     });
 });
@@ -233,14 +281,14 @@ suite("Regexp vs indexOf", function() {
 
 ### Default
 
-The default reporter outputs results for each test case, including comparison tests.
+The default reporter outputs results for each test.
 
 ![Default Reporter](https://raw.githubusercontent.com/artifacthealth/baseline/master/docs/img/default-reporter.png)
 
 
 ### Minimal
 
-The minimal reporter only reports results for individual tests that have changed from baseline. Otherwise, only the
+The minimal reporter only reports results for tests that have changed from baseline. Otherwise, only the
 summary is reported.
 
 ![Default Reporter](https://raw.githubusercontent.com/artifacthealth/baseline/master/docs/img/minimal-reporter.png)
