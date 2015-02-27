@@ -16,6 +16,7 @@ import Evaluator = require("./evaluator");
 import NodeTimer = require("./nodeTimer");
 import Runner = require("./runner");
 import DefaultReporter = require("./reporters/defaultReporter");
+import MinimalReporter = require("./reporters/minimalReporter");
 import Results = require("./results");
 
 class Baseline {
@@ -173,6 +174,9 @@ class Baseline {
             suites[0].addBeforeEach(action);
         }
     }
+
+    static DefaultReporter = DefaultReporter;
+    static MinimalReporter = MinimalReporter;
 }
 
 export = Baseline;

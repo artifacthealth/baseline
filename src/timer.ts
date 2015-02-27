@@ -32,7 +32,7 @@ class Timer {
 
     private _resolution: number;
     /**
-     * Establishes the smallest unit the timer can test.
+     * The smallest unit the timer can measure.
      */
     get resolution(): number {
 

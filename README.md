@@ -3,7 +3,8 @@
 # Baseline
 
 Baseline is a benchmarking framework for [node.js](http://nodejs.org/) where the results of a test run can be saved and
-used to determine if the performance of a test changes in the future.
+used to determine if performance changes in the future. Alternatively, tests can be compared against each other. Baseline
+supports both synchronous and asynchronous tests using a simple syntax.
 
 Baseline is inspired by and incorporates code from two projects: [Benchmark.js](http://benchmarkjs.com/) and
 [mocha](http://mochajs.org/).
