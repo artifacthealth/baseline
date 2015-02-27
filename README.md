@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/artifacthealth/baseline.svg?branch=master)](https://travis-ci.org/artifacthealth/baseline)
+
 # Baseline
 
 Baseline is a benchmarking framework for [node.js](http://nodejs.org/) where the results of a test run can be saved and
