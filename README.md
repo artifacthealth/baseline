@@ -1,11 +1,14 @@
 # Baseline
 
-This is a work in progress. Check back in a couple weeks.
+Baseline is a benchmarking framework for [node.js](http://nodejs.org/) where the results of a test run can be saved and
+used to determine if the performance of a test changes in the future.
+
+Baseline is inspired by and incorporates code from two projects: [Benchmark.js](http://benchmarkjs.com/) and
+[mocha](http://mochajs.org/).
 
 
 ## Table of contents
 
-* [`A note on micro-benchmarks`](#micro-benchmarks)
 * [`Installation`](#installation)
 * [`Test suites`](#test-suites)
 * [`Establishing a baseline`](#establishing-a-baseline)
@@ -15,18 +18,7 @@ This is a work in progress. Check back in a couple weeks.
 * [`Hooks`](#hooks)
 * [`Pending tests`](#pending-tests)
 * [`Reporters`](#reporters)
-
-
-<a name="micro-benchmarks" />
-## A note on micro-benchmarks
-
-Baseline cannot be used for micro-benchmarks such as determining if == or === is faster. The time required to call the
-test function is generally greater than the time to execute the test itself. The [Benchmark.js](http://benchmarkjs.com/)
-library is able run micro-benchmarks because it dynamically creates a function, when possible, that compiles the test case into
-the test loop. Baseline does not do this. However, even this technique of dynamically creating the test function is not
-possible for asynchronous tests or tests that reference variables from an outer scope. Regardless, V8 compiler
-optimizations can make micro-benchmarks unreliable. Please see [this video](https://www.youtube.com/watch?v=65-RbBwZQdU)
-for more information.
+* [`A note on micro-benchmarks`](#micro-benchmarks)
 
 
 <a name="installation" />
@@ -266,7 +258,19 @@ The default reporter outputs results for each test.
 
 ### Minimal
 
-The minimal reporter only reports results for tests that have changed from baseline. Otherwise, only the
+The minimal reporter only outputs results for tests that have changed from baseline. Otherwise, only the
 summary is reported.
 
 ![Default Reporter](https://raw.githubusercontent.com/artifacthealth/baseline/master/docs/img/minimal-reporter.png)
+
+
+<a name="micro-benchmarks" />
+## A note on micro-benchmarks
+
+Baseline cannot be used for micro-benchmarks such as determining if == or === is faster. The time required to call the
+test function is generally greater than the time to execute the test itself. The [Benchmark.js](http://benchmarkjs.com/)
+library is able run micro-benchmarks because it dynamically creates a function, when possible, that compiles the test case into
+the test loop. Baseline does not do this. However, even this technique of dynamically creating the test function is not
+possible for asynchronous tests or tests that reference variables from an outer scope. Regardless, V8 compiler
+optimizations can make micro-benchmarks unreliable. Please see [this video](https://www.youtube.com/watch?v=65-RbBwZQdU)
+for more information.
