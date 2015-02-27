@@ -5,7 +5,7 @@ This is a work in progress. Check back in a couple weeks.
 
 ## Table of contents
 
-* ['A note on micro-benchmarks'](#micro-benchmarks)
+* [`A note on micro-benchmarks`](#micro-benchmarks)
 * [`Installation`](#installation)
 * [`Test suites`](#test-suites)
 * [`Establishing a baseline`](#establishing-a-baseline)
