@@ -15,6 +15,10 @@ declare var compare: {
 declare var test: {
     (title: string, action?: (done?: Callback) => void): void;
     skip(title: string, action: (done?: Callback) => void): void;
+    loop: {
+        (title: string, action?: (count: number, done?: Callback) => void): void;
+        skip(title: string, action: (count: number, done?: Callback) => void): void;
+    }
 }
 
 declare function after(action: (done?: Callback) => void): void;
