@@ -30,9 +30,6 @@ class Results {
 
                 var ret = new Results();
                 ret._results = JSON.parse(data);
-                if(ret._results.type === undefined) {
-                    ret._results.type = "hz";
-                }
                 callback(null, ret);
             });
         });
@@ -51,10 +48,10 @@ class Results {
 
     getBaselineHz(test: Test): number {
 
-        return this._findValue(this._getPath(test));
+        return this._findHz(this._getPath(test));
     }
 
-    private _findValue(path: string[]): number {
+    private _findHz(path: string[]): number {
 
         var results = this._results;
         for(var i = 0, l = path.length - 1; i < l; i++) {
@@ -84,9 +81,7 @@ class Results {
 
     private static _getSuiteResults(suite: Suite): SuiteResults {
 
-        var results: SuiteResults = {
-            type: "sample"
-        }
+        var results: SuiteResults = {};
 
         if(suite.tests.length > 0) {
             results.tests = {};
@@ -112,7 +107,6 @@ class Results {
 
 interface SuiteResults {
 
-    type?: string;
     timestamp?: number;
     tests?: Lookup<number>;
     suites?: Lookup<SuiteResults>;

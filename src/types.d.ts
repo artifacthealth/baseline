@@ -13,10 +13,6 @@ interface ActionCallback {
     (done?: Callback): void;
 }
 
-interface LoopCallback {
-    (count: number, done?: Callback): void;
-}
-
 interface Lookup<T> {
     [name: string]: T;
 }

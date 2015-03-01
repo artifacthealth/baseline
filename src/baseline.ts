@@ -11,7 +11,6 @@ import path = require("path");
 
 import Suite = require("./suite");
 import Test = require("./test");
-import ManualTest = require("./manualTest");
 import Reporter = require("./reporters/reporter");
 import Evaluator = require("./evaluator");
 import NodeTimer = require("./nodeTimer");
@@ -147,19 +146,16 @@ class Baseline {
         }
 
         context.test = (title: string, action: ActionCallback): Test => {
-            return addTest(new Test(title, action));
+            var test = new Test(title, action);
+            suites[0].addTest(test);
+            test.timeout = this.timeout;
+            return test;
         }
 
         context.test.skip = (title: string, action: ActionCallback): Test => {
-            return skipTest(context.test(title, action));
-        }
-
-        context.test.loop = (title: string, action: LoopCallback): Test => {
-            return addTest(new ManualTest(title, action));
-        }
-
-        context.test.loop.skip = (title: string, action: LoopCallback): Test => {
-            return skipTest(context.test.loop(title, action));
+            var test = global.test(title, action);
+            test.pending = true;
+            return test;
         }
 
         context.after = (action: ActionCallback): void => {
@@ -176,17 +172,6 @@ class Baseline {
 
         context.beforeEach = (action: ActionCallback): void => {
             suites[0].addBeforeEach(action);
-        }
-
-        function addTest(test: Test): Test {
-            suites[0].addTest(test);
-            test.timeout = this.timeout;
-            return test;
-        }
-
-        function skipTest(test: Test): Test {
-            test.pending = true;
-            return test;
         }
     }
 

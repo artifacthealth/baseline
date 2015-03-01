@@ -23,7 +23,7 @@ class Runnable {
     constructor(protected action: ActionCallback) {
 
         if(action) {
-            this.async = action.length > 0;
+            this.async = !!action.length;
         }
     }
 
