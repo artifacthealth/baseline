@@ -72,8 +72,8 @@ Sorting Algorithms
 Completed 2 tests.
 ```
 
-Each test is executed repeatedly until a statistically significant result can be established. The result is reported in
-operations per second along with the relative margin of error. All statistical calculations are based on the
+Each test is executed repeatedly to reduce the margin of error. The result is reported in operations per second
+along with the relative margin of error. All statistical calculations are based on the
 [Benchmark.js](http://benchmarkjs.com/) library.
 
 
@@ -193,9 +193,12 @@ compare("process.nextTick vs setTimeout vs setImmediate", function() {
 });
 ```
 
-Baseline will automatically determine if the test should be execute as a synchronous or asynchronous test based on the
+Baseline will automatically determine if the test should execute as a synchronous or asynchronous test based on the
 absence or presence of the callback in the test function. Also note that the callback accepts an `Error` object as a
 parameter.
+
+Note that executing synchronous code using an asynchronous style test (using a callback) may result in a stack-overflow
+error.
 
 
 <a name="hooks" />
