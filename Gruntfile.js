@@ -5,6 +5,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-mocha-test");
+    grunt.loadNpmTasks("grunt-dts-concat");
 
     // Project configuration.
     grunt.initConfig({
@@ -29,7 +30,7 @@ module.exports = function(grunt) {
                     target: "es5",
                     module: "commonjs",
                     sourceMap: true,
-                    declaration: false,
+                    declaration: true,
                     noImplicitAny: true
                 },
                 src: ['src/**/*.ts'],
@@ -55,7 +56,9 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         src: [
-                            'package.json'
+                            'package.json',
+                            'typings/**/*.d.ts',
+                            'src/**/*.d.ts'
                         ],
                         dest: 'build/'
                     }
@@ -82,6 +85,16 @@ module.exports = function(grunt) {
                 },
                 src: ['build/src/program.js'],
                 dest: 'lib/program.js'
+            }
+        },
+
+        dts_concat: {
+            lib: {
+                options: {
+                    name: 'baseline-lib',
+                    main: 'build/src/baseline.d.ts',
+                    outDir: 'lib/'
+                }
             }
         },
 
