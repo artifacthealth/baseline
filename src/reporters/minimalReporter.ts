@@ -20,7 +20,7 @@ class MinimalReporter extends ReporterBase {
 
     private _state: SuiteState[] = [];
 
-    start(baselineTimestamp: Date): void {
+    start(timestamp: Date, duration?: number): void {
 
         this.newLine();
     }

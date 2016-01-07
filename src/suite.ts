@@ -39,6 +39,22 @@ class Suite {
         this._pending = value;
     }
 
+    get testCount(): number {
+
+        if(this.pending) return 0;
+
+        var count = 0;
+
+        for(var i = 0; i < this.tests.length; i++) {
+            count += this.tests[i].pending ? 0 : 1;
+        }
+
+        for(var i = 0; i < this.suites.length; i++) {
+            count += this.suites[i].testCount;
+        }
+        return count;
+    }
+
     private _pending: boolean;
 
     constructor(public title: string = "") {

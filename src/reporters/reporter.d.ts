@@ -14,8 +14,10 @@ interface Reporter {
 
     /**
      * Called at start.
+     * @param timestamp When comparing to a baseline, contains the timestamp of the baseline; otherwise, undefined.
+     * @param duration When updating a baseline, contains the estimated time it will take in seconds; otherwise, undefined.
      */
-    start(baselineTimestamp: Date): void;
+    start(timestamp: Date, duration?: number): void;
 
     /**
      * Called at end.

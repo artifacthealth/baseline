@@ -28,7 +28,7 @@ class ReporterBase implements Reporter {
      */
     useColors: boolean;
 
-    start(baselineTimestamp: Date): void {
+    start(timestamp: Date, duration?: number): void {
     }
 
     end(): void {

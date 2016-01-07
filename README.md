@@ -24,7 +24,7 @@ Baseline is inspired by and incorporates code from two projects: [Benchmark.js](
 * [`A note on micro-benchmarks`](#micro-benchmarks)
 
 
-<a name="installation" />
+<a name="installation"></a>
 ## Installation
 
 Baseline can be installed using [npm](https://www.npmjs.com/):
@@ -33,7 +33,7 @@ Baseline can be installed using [npm](https://www.npmjs.com/):
 $ npm install -g baseline
 ```
 
-<a name="test-suites" />
+<a name="test-suites"></a>
 ## Test suites
 
 Test suites follow a paradigm similar to the [mocha](http://mochajs.org/) unit test framework. Suppose you have a file
@@ -77,7 +77,7 @@ along with the relative margin of error. All statistical calculations are based 
 [Benchmark.js](http://benchmarkjs.com/) library.
 
 
-<a name="establishing-a-baseline" />
+<a name="establishing-a-baseline"></a>
 ## Establishing a baseline
 
 Baseline can save the results of test runs to a file. Future runs of the same tests can then be compared against the saved
@@ -88,7 +88,7 @@ the name of the file to use.
 $ baseline -b results.json test.js
 ```
 
-<a name="comparing-against-a-baseline" />
+<a name="comparing-against-a-baseline"></a>
 ## Comparing against a baseline
 
 Once a baseline file has been created, if the program is run with the `-b` option again, the tests will be compared against
@@ -117,7 +117,7 @@ threshold of 5%:
 $ baseline -b results.json -T 5 test.js
 ```
 
-<a name="updating-a-baseline" />
+<a name="updating-a-baseline"></a>
 ## Updating a baseline
 
 Executing tests with the `-b` option will not change the baseline file once it has been created. Use the `-u` option to
@@ -127,7 +127,7 @@ update the baseline file with the result of the current test run.
 $ baseline -b results.json -u test.js
 ```
 
-<a name="comparison-tests" />
+<a name="comparison-tests"></a>
 ## Comparison tests
 
 Similar to [jsperf.com](https://jsperf.com/), Baseline is able to compare the performance of several different tests
@@ -170,7 +170,7 @@ Completed 2 tests.
 Note that comparison tests are never compared to a baseline, even if the `-b` option is specified.
 
 
-<a name="asynchronous-tests" />
+<a name="asynchronous-tests"></a>
 ## Asynchronous tests
 
 Similar to [mocha](http://mochajs.org/), asynchronous tests are accomplished by including a callback, usually called
@@ -201,7 +201,7 @@ Note that executing synchronous code using an asynchronous style test (using a c
 error.
 
 
-<a name="hooks" />
+<a name="hooks"></a>
 ## Hooks
 Baseline provides the hooks before(), after(), beforeEach(), afterEach(), that can be used to setup and cleanup tests.
 During a test cycle, an individual test will be executed multiple times. Hooks must be written to take into account that
@@ -226,7 +226,7 @@ suite('hooks', function() {
 ```
 
 
-<a name="pending-tests" />
+<a name="pending-tests"></a>
 ## Pending tests
 Tests that do not have a callback are considered pending and are used to document tests that will be implemented in the
 future.
@@ -252,7 +252,7 @@ suite("Sorting Algorithms", function() {
 ```
 
 
-<a name="reporters" />
+<a name="reporters"></a>
 ## Reporters
 
 ### Default
@@ -270,7 +270,7 @@ summary is reported.
 ![Default Reporter](https://raw.githubusercontent.com/artifacthealth/baseline/master/docs/img/minimal-reporter.png)
 
 
-<a name="micro-benchmarks" />
+<a name="micro-benchmarks"></a>
 ## A note on micro-benchmarks
 
 Baseline cannot be used for micro-benchmarks such as determining if == or === is faster. The time required to call the
