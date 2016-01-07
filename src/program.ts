@@ -12,15 +12,14 @@ program
     .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
     .usage('[options] [files]')
     .option('-b, --baseline <file>', 'full path to file to use for baseline')
-    .option('-c, --confidence <percent>', 'percent confidence for reporting changes from baseline [95]')
+    .option('-c, --colors', 'force enabling of colors')
+    .option('-C, --no-colors', 'force disabling of colors')
     .option('-m, --min-time <seconds>', 'minimum time a test runs in seconds [2]')
     .option('-O, --reporter-options <k=v,k2=v2,...>', 'reporter-specific options')
     .option('-R, --reporter <name>', 'specify the reporter to use')
     .option('-t, --timeout <ms>', 'set timeout in milliseconds [60000]')
-    .option('-T, --threshold <percent>', 'minimum reported percent change from baseline [5]')
+    .option('-T, --threshold <seconds>', 'minimum reported percent difference from baseline [10]')
     .option('-u, --update', 'update baseline')
-    .option('--colors', 'force enabling of colors')
-    .option('--no-colors', 'force disabling of colors')
     .option('--recursive', 'include sub directories')
     .option('--reporters', 'display available reporters');
 
@@ -64,10 +63,6 @@ if(options.minTime !== undefined) {
 
 if(options.threshold !== undefined) {
     baseline.threshold = options.threshold;
-}
-
-if(options.confidence !== undefined) {
-    baseline.confidence = options.confidence;
 }
 
 if(options.update !== undefined) {

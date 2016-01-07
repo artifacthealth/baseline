@@ -69,13 +69,6 @@ class Test extends Runnable {
     pending: boolean;
 
 
-    /**
-     * Gets the Hz, i.e. operations per second, of `test` adjusted for the margin of error.
-     */
-    get adjustedHz(): number {
-        return 1 / (this.mean + this.moe);
-    }
-
     constructor(public title: string, action?: ActionCallback) {
         super(action);
 

@@ -28,11 +28,6 @@ class Evaluator {
     maxTime = 2;
 
     /**
-     * The delay, in milliseconds, between asynchronous test cycles.
-     */
-    delay = 5;
-
-    /**
      * The time needed, in seconds, to reduce the percent uncertainty of a test to 1%
      */
     private _minTime = 0;
@@ -100,7 +95,7 @@ class Evaluator {
                     callback();
                 }
                 else {
-                    setTimeout(next, this.delay);
+                    next();
                 }
             });
         })();

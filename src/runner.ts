@@ -26,12 +26,7 @@ class Runner {
     /**
      * The minimum percent difference from baseline that is reported as a change.
      */
-    threshold = 5;
-
-    /**
-     * The minimum percent confidence that the test has changed from baseline.
-     */
-    confidence = 95;
+    threshold = 10;
 
     private _evaluator: Evaluator;
     private _reporter: Reporter;
@@ -46,6 +41,8 @@ class Runner {
     }
 
     run(suite: Suite, callback: ResultCallback<number>): void {
+
+        this._reporter.start(this._baseline ? this._baseline.timestamp : undefined);
 
         this._runSuite(suite, (err: Error) => {
             if(err) return callback(err);
@@ -110,15 +107,19 @@ class Runner {
                     if(err) return callback(err);
 
                     if(this._baseline) {
-                        var percentChange = this._baseline.compare(test, this.confidence);
-                        if(percentChange !== undefined) {
-                            if (!isFinite(percentChange) || Math.abs(percentChange) < this.threshold) {
-                                percentChange = undefined;
-                            }
-                            else {
-                                if (percentChange < 0) {
-                                    this._slower++;
-                                }
+                        var hz = this._getHz(test),
+                            baselineHz = this._baseline.getBaselineHz(test),
+                            percentChange: number;
+                    }
+
+                    if(baselineHz) {
+                        percentChange = ((hz - baselineHz) / baselineHz) * 100;
+                        if(!isFinite(percentChange) || Math.abs(percentChange) < this.threshold) {
+                            percentChange = undefined;
+                        }
+                        else {
+                            if(percentChange < 0) {
+                                this._slower++;
                             }
                         }
                     }
@@ -136,15 +137,13 @@ class Runner {
             fastest = suite.filter('fastest'),
             slowest = suite.filter('slowest');
 
-        if(fastest.length == 0) return;
-
-        var fastestHz =  fastest[0].adjustedHz;
+        var fastestHz = this._getHz(fastest[0]);
 
         tests.forEach((test: Test) => {
 
             if(test.pending) return;
 
-            var hz = test.adjustedHz,
+            var hz = this._getHz(test),
                 percentSlower = (1 - (hz / fastestHz)) * 100,
                 rank = 0;
 
@@ -161,6 +160,13 @@ class Runner {
         });
     }
 
+    /**
+     * Gets the Hz, i.e. operations per second, of `test` adjusted for the margin of error.
+     * @param test The test.
+     */
+    private _getHz(test: Test) {
+        return 1 / (test.mean + test.moe);
+    }
 }
 
 export = Runner;

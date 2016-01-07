@@ -34,17 +34,12 @@ class Baseline {
     /**
      * The minimum percent difference from baseline that is reported as a change.
      */
-    threshold = 5;
-
-    /**
-     * The minimum percent confidence that the test has changed from baseline.
-     */
-    confidence = 95;
+    threshold = 10;
 
     /**
      * The maximum time a test is allowed to run, in seconds, before finishing
      */
-    maxTime: number;
+    maxTime = 2;
 
     /**
      * Maximum execution time for an asynchronous action, in milliseconds.
@@ -68,11 +63,6 @@ class Baseline {
     useColors: boolean;
 
     /**
-     * The delay, in milliseconds, between asynchronous test cycles.
-     */
-    delay = 5;
-
-    /**
      * The root suite. Top level suites contained in 'files' are added to the root suite.
      */
     private _suite: Suite;
@@ -85,42 +75,19 @@ class Baseline {
         Results.load(this.baselinePath, (err: Error, baseline?: Results) => {
             if(err) return callback(err);
 
-            if (this.updateBaseline) {
-                baseline = undefined;
-            }
-
-            var updateBaseline = !baseline && this.baselinePath;
-
-            var timePerTest = this.maxTime || (updateBaseline ? 30 : 2);
-
             var reporter = this.reporter || new DefaultReporter();
             reporter.useColors = this.useColors;
 
             var evaluator = new Evaluator(new NodeTimer(), reporter);
-            evaluator.maxTime = timePerTest;
-            evaluator.delay = this.delay;
+            evaluator.maxTime = this.maxTime;
 
             var runner = new Runner(reporter, evaluator, baseline);
             runner.threshold = this.threshold;
-            runner.confidence = this.confidence;
-
-            var timestamp: Date,
-                duration: number;
-
-            if (baseline) {
-                timestamp = baseline.timestamp;
-            }
-
-            if (updateBaseline) {
-                duration = this._suite.testCount * timePerTest;
-            }
-
-            reporter.start(timestamp, duration);
 
             runner.run(this._suite, (err: Error, slower?: number) => {
                 if(err) return callback(err);
 
-                if(updateBaseline) {
+                if((!baseline || this.updateBaseline) && this.baselinePath) {
                     Results.fromSuite(this._suite).save(this.baselinePath, (err: Error) => {
                         if (err) return callback(err);
                         callback(null, slower);

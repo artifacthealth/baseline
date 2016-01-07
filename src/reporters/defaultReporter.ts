@@ -12,21 +12,12 @@ class DefaultReporter extends ReporterBase {
     private _slower = 0;
     private _suite: Suite;
 
-    start(timestamp: Date, duration?: number): void {
+    start(baselineTimestamp: Date): void {
 
         this.newLine();
-        if (timestamp) {
-            this.writeLine("Tests will be compared to baseline established on " + timestamp.toLocaleDateString()
-                                + " at " + timestamp.toLocaleTimeString() + ".");
-            this.newLine();
-        }
-
-        if (duration) {
-
-            var minutes = Math.floor(duration / 60);
-            var seconds = duration % 60;
-
-            this.writeLine("Establishing baseline. This will take approximately " + minutes + "m " + seconds + "s.");
+        if(baselineTimestamp) {
+            this.writeLine("Tests will be compared to baseline established on " + baselineTimestamp.toLocaleDateString()
+                                + " at " + baselineTimestamp.toLocaleTimeString() + ".");
             this.newLine();
         }
     }
